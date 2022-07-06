@@ -92,6 +92,11 @@ const App: React.FC = () => {
     ) {
       setGameOver(true);
     }
+    //check if snake hit into itself, if so game over!
+    else if (game.snakeSelfCollision(NewPosition)) {
+      console.log('self collision');
+      setGameOver(true);
+    }
 
     //LATER : check if snake had hit food
     if (JSON.stringify(NewPosition) === JSON.stringify(game.food)) {

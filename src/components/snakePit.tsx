@@ -18,7 +18,7 @@ export default class SnakePit {
 
   // defining speed of snake, for higher difficulty
   // will have higher speed
-  snakeSpeed: number = 1;
+  snakeSpeed: number = 2;
 
   //direct snake is currently moving in snake pit
   // 4 possible values: up, down, left, or right
