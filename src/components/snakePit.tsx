@@ -18,7 +18,7 @@ export default class SnakePit {
 
   // defining speed of snake, for higher difficulty
   // will have higher speed
-  snakeSpeed: number = 2;
+  snakeSpeed: number = 1.5;
 
   //direct snake is currently moving in snake pit
   // 4 possible values: up, down, left, or right
@@ -36,7 +36,7 @@ export default class SnakePit {
 
   constructor(Nx: number, Ny: number, difficulty: string = 'easy') {
     // setting random coordinates for snake
-    const xHead = 3 + Math.floor(Math.random() * (Nx - 6));
+    const xHead = 3 + Math.floor(Math.random() * (Ny - 6));
     const yHead = 3 + Math.floor(Math.random() * (Nx - 6));
 
     this.snake = [
@@ -63,8 +63,8 @@ export default class SnakePit {
     }
 
     //checking if there is higher difficulting setting
-    if (difficulty === 'medium') this.snakeSpeed = 1.5;
-    else if (difficulty === 'hard') this.snakeSpeed = 2.0;
+    if (difficulty === 'medium') this.snakeSpeed = 2;
+    else if (difficulty === 'hard') this.snakeSpeed = 3;
   } // end of constructor
 
   // arrow function to return position of snake head
@@ -108,17 +108,26 @@ export default class SnakePit {
     this.snake.push(newTail);
   }
 
-  // checking if new head position of snake
+  // checking if snake is colliding with either
+  // itself a possible barrior or new food position
   // is colliding into snake body, if so , game over!
-  snakeSelfCollision(newHead: Cell): boolean {
-    let selfCollision = false;
+  snakeCollision(item: Cell): boolean {
+    let collision = false;
     // looping through snake body to see if there is self collision
     for (const { x, y } of this.snake) {
-      if (x === newHead.x && y === newHead.y) {
-        selfCollision = true;
+      if (x === item.x && y === item.y) {
+        collision = true;
         break;
       }
     }
-    return selfCollision;
+    return collision;
+  }
+
+  // place food in random position
+  placeFood(): Cell {
+    const x = 1 + Math.floor(Math.random() * (this.yDim - 2));
+    const y = 1 + Math.floor(Math.random() * (this.xDim - 2));
+    this.food = { x, y };
+    return this.food;
   }
 }
