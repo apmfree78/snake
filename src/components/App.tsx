@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import SnakePit from './snakePit';
-import Swal from 'sweetalert2';
 import GameCell from './GameCell';
 import { playSound } from '../library/sounds';
 import { GameInputForm } from './GameInputForm';
 import { ScoreBoard, GameGrid } from '../library/gameStyled';
+import { popUpMessage } from '../library/popUpMessages';
 
 //initial default values size of board , Nx x Ny
 const Nx: number = 15;
@@ -89,12 +89,14 @@ const App: React.FC = () => {
       NewPosition.x < 0
     ) {
       playSound('lost');
+      popUpMessage('lost', 'YOU RAN INTO THE WALL!');
       setGameOver(true);
     }
     //check if snake hit into itself, if so game over!
     else if (game.snakeCollision(NewPosition)) {
       console.log('self collision');
       playSound('lost');
+      popUpMessage('lost', 'YOU GOT ALL TANGLED UP!');
       setGameOver(true);
     }
     //update position of snake body based on new position
