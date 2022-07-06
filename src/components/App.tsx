@@ -101,7 +101,7 @@ const App: React.FC = () => {
     game.newSnakeBody(NewPosition);
 
     //LATER : check if snake had hit food
-    if (JSON.stringify(NewPosition) === JSON.stringify(game.food)) {
+    if (JSON.stringify(NewPosition) === JSON.stringify(foodPosition)) {
       // grow snake 1 unit longer
       game.growSnakeBody();
 
@@ -214,12 +214,12 @@ const App: React.FC = () => {
       </ScoreBoard>
       <GameGrid height={xHeight} width={yWidth} xdim={xDim} ydim={yDim}>
         <>
-          {game.snake.map(({ x, y }, index) => {
+          {game.snake.map((snakeCell, index) => {
             return (
-              <GameCell key={Math.random()} x={x} y={y} cellType='snake' />
+              <GameCell key={Math.random()} cell={snakeCell} cellType='snake' />
             );
           })}
-          <GameCell x={game.food.x} y={game.food.y} cellType='food' />
+          <GameCell cell={game.food} cellType='food' />
         </>
       </GameGrid>
       <GameInputForm width={yWidth} resetGame={resetGame} />

@@ -39,11 +39,7 @@ export default class SnakePit {
     const xHead = 3 + Math.floor(Math.random() * (Ny - 6));
     const yHead = 3 + Math.floor(Math.random() * (Nx - 6));
 
-    this.snake = [
-      { x: xHead, y: yHead },
-      { x: xHead, y: yHead + 1 },
-      { x: xHead, y: yHead + 2 },
-    ];
+    this.snake = [{ x: xHead, y: yHead }];
 
     // setting board dimensions and scale
     this.xDim = Nx;

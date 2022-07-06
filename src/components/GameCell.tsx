@@ -1,8 +1,13 @@
 import styled from 'styled-components';
 
-interface Props {
+// Cell specifies position on game board
+interface Cell {
   x: number;
   y: number;
+}
+
+interface Props {
+  cell: Cell;
   cellType: string;
 }
 
@@ -34,9 +39,9 @@ const FoodBody = styled(SnakeBody)`
 `;
 
 //SnakeCell button - reusable component
-const SnakeCell: React.FC<Props> = ({ x, y, cellType }) => {
-  if (cellType === 'snake') return <SnakeBody x={x} y={y} />;
-  else return <FoodBody x={x} y={y} />;
+const SnakeCell: React.FC<Props> = ({ cell, cellType }) => {
+  if (cellType === 'snake') return <SnakeBody x={cell.x} y={cell.y} />;
+  else return <FoodBody x={cell.x} y={cell.y} />;
 };
 
 export default SnakeCell;
