@@ -88,28 +88,33 @@ const App: React.FC = () => {
       NewPosition.y < 0 ||
       NewPosition.x < 0
     ) {
+      playSound('lost');
       setGameOver(true);
     }
     //check if snake hit into itself, if so game over!
     else if (game.snakeCollision(NewPosition)) {
       console.log('self collision');
+      playSound('lost');
       setGameOver(true);
     }
+    //update position of snake body based on new position
+    game.newSnakeBody(NewPosition);
 
     //LATER : check if snake had hit food
     if (JSON.stringify(NewPosition) === JSON.stringify(game.food)) {
       // grow snake 1 unit longer
       game.growSnakeBody();
 
-      // place food in new position
+      // place food in new position and update state
       setFoodPosition(game.placeFood());
+
+      // celebrate with some fun sounds
+      playSound('click3');
+      setTimeout(() => playSound('win'), 1000);
 
       // reward player with +5 on their score
       setGameScore(gameScore + 5);
     }
-
-    //update position of snake body based on new position
-    game.newSnakeBody(NewPosition);
 
     //update state
     setSnakePosition(NewPosition);

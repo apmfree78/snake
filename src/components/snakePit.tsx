@@ -125,9 +125,14 @@ export default class SnakePit {
 
   // place food in random position
   placeFood(): Cell {
-    const x = 1 + Math.floor(Math.random() * (this.yDim - 2));
-    const y = 1 + Math.floor(Math.random() * (this.xDim - 2));
-    this.food = { x, y };
+    // looping to make sure new food piece is not overlapping
+    // with snake
+    do {
+      const x = 1 + Math.floor(Math.random() * (this.yDim - 2));
+      const y = 1 + Math.floor(Math.random() * (this.xDim - 2));
+      this.food = { x, y };
+    } while (this.snakeCollision(this.food));
+
     return this.food;
   }
 }

@@ -8,6 +8,9 @@ export async function playSound(soundType: string): Promise<void> {
     case 'click2':
       source = 'click5.wav';
       break;
+    case 'click3':
+      source = 'click2.wav';
+      break;
     case 'click':
       source = 'click.wav';
       break;
