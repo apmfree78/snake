@@ -1,4 +1,4 @@
-import React, { KeyboardEventHandler, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SnakePit from './snakePit';
 import Swal from 'sweetalert2';
 import GameCell from './GameCell';
@@ -16,8 +16,6 @@ interface Cell {
   x: number;
   y: number;
 }
-// Snake is just an array of cells
-type SnakeBody = Cell[];
 
 // the game object creates the static game
 let game: SnakePit = new SnakePit(Nx, Ny, difficulty);
@@ -135,7 +133,7 @@ const App: React.FC = () => {
   // hits up , down, right, or left arrow
   // update game.direction once this happens
   useEffect(() => {
-    const playerInput = (event: KeyboardEvent) => {
+    const playerInput = (event: KeyboardEvent): void => {
       //determine what direction user wants snake to go
       console.log(event.key);
       switch (event.key) {
@@ -164,9 +162,9 @@ const App: React.FC = () => {
 
   // continuously loop game, until gameOver is True
   useEffect(() => {
-    const movementDelay = Math.round(1000 / game.snakeSpeed);
+    const movementDelay: number = Math.round(1000 / game.snakeSpeed);
 
-    const gameInterval = setInterval(
+    const gameInterval: NodeJS.Timer = setInterval(
       () => moveSnake(game.direction),
       movementDelay
     );
