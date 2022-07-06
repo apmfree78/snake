@@ -69,4 +69,56 @@ export default class SnakePit {
 
   // arrow function to return position of snake head
   snakeHead = () => this.snake[0];
+
+  // after snake moves on the screen each of its cells' positions
+  // need to be updated.  We do this by adding the new position
+  // as new head of snake and remove final position of snake
+  newSnakeBody(newHead: Cell) {
+    // add new head to snake
+    this.snake.unshift(newHead);
+
+    //remove old tail
+    this.snake.pop();
+  }
+
+  // after snake eats food it's body grows by 1 unit
+  // we grow the snake by adding a cell at the end
+  // in the OPPOSITE direction that it's moving
+  growSnakeBody() {
+    // first get tail of snake (last cell)
+    const newTail: Cell = this.snake[this.snake.length - 1];
+
+    // now based on direction snake is moving seemlessly add on tail
+    switch (this.direction) {
+      case 'up':
+        newTail.y++;
+        break;
+      case 'down':
+        newTail.y--;
+        break;
+      case 'left':
+        newTail.x++;
+        break;
+      case 'right':
+        newTail.x--;
+        break;
+    }
+
+    // add tail onto Snake
+    this.snake.push(newTail);
+  }
+
+  // checking if new head position of snake
+  // is colliding into snake body, if so , game over!
+  snakeSelfCollision(newHead: Cell): boolean {
+    let selfCollision = false;
+    // looping through snake body to see if there is self collision
+    for (const { x, y } of this.snake) {
+      if (x === newHead.x && y === newHead.y) {
+        selfCollision = true;
+        break;
+      }
+    }
+    return selfCollision;
+  }
 }
