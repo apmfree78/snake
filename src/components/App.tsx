@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Board from './gameBoard';
+import SnakePit from './snakePit';
 import Swal from 'sweetalert2';
 import GameCell from './GameCell';
 import { playSound } from '../library/sounds';
@@ -11,17 +11,16 @@ const Nx: number = 15;
 const Ny: number = 20;
 const difficulty: string = 'easy'; // diffculting of game, determines % of mines
 
-// interface for full cell state
+// Cell specifies position on game board
 interface Cell {
-  isFlagged: boolean; //true => cell is flagged, false => not flagged
-  isRevealed: boolean; //true => cell is revealed, false => hidden
-  hasMine: boolean; // true => has a mine, false => no mine
-  adjacentMines: number; // number of neighors that have a mine
+  x: number;
+  y: number;
 }
-type Cells = Cell[][];
+// Snake is just an array of cells
+type SnakeBody = Cell[];
 
 // the game object creates the static game
-let game: Board = new Board(Nx, Ny, difficulty);
+let game: SnakePit = new SnakePit(Nx, Ny, difficulty);
 
 // its contains the following functions
 /* 
@@ -55,114 +54,10 @@ const App: React.FC = () => {
     hasMine: boolean; // true => has a mine, false => no mine
     adjacentMines: number; // number of neighors that have a mine
   } */
-  const [cellState, setCellState] = useState<Cells>(game.gameBoard);
+  const [snakePosition, setSnakePosition] = useState<Cell>(game.snakeHead());
+  const [foodPosition, setFoodPosition] = useState<Cell>(game.food);
   const [gameScore, setGameScore] = useState<number>(0);
   const [gameOver, setGameOver] = useState<boolean>(false);
-
-  // reveals game cells after they are clicked by player
-  // if there are no surrounding mines, then repeats this
-  // process for neighboring cells, recursively
-  function revealCell(x: number, y: number): void {
-    // checking to make sure cell is not revealed
-    if (!cellState[x][y].isRevealed) {
-      // saving cell state
-      const newCellState: Cells = JSON.parse(JSON.stringify(cellState));
-      newCellState[x][y].isRevealed = true; //this cell is now revealed! :)
-      game.revealedCells++; //increment number of revealed cells
-
-      // checking if there is a mine
-      if (cellState[x][y].hasMine) {
-        // THERE IS A MINE
-        // Player has LOST GAME
-        playSound('bomb');
-        setCellState(newCellState);
-        setGameScore(0);
-        setGameOver(true);
-
-        // message
-        Swal.fire({
-          position: 'top',
-          icon: 'error',
-          title: 'BOOM! EXPLOSION',
-          text: `Please Try Again!!`,
-          showDenyButton: true,
-          denyButtonText: 'Restart Game',
-          timer: 10000,
-        }).then((result) => {
-          if (result.isDenied) resetGame();
-        });
-        // pop up alert that game is lost
-        // sound
-        setTimeout(() => playSound('lost'), 1000);
-        // setTimeout(resetGame, 5000); //restart game
-      } else {
-        // no bomb found , PLEW!
-
-        // play beeping sound
-        // playSound('reveal');
-        playSound('click2');
-
-        //set neighboring cells that have no bombs to true
-        // this function will change new game state with updated
-        // state with all revealed cells (ie cells set to true)
-        if (cellState[x][y].adjacentMines === 0)
-          game.revealNeighbors(x, y, newCellState);
-        setCellState(newCellState);
-
-        // check if player has WON game
-        // if total cells === total # of bombs + cells revealed, player has WON!
-        if (
-          game.totalCellCount() ===
-          game.totalMineCount() + game.revealedCells
-        ) {
-          setGameScore(game.totalCellCount());
-
-          // Player has won, success message + sound
-          // sound
-          playSound('win');
-          setGameOver(true);
-          // message
-          Swal.fire({
-            position: 'top',
-            icon: 'success',
-            title: 'CONGRADULATIONS',
-            text: `YOU WON!! SCORE: ${gameScore}`,
-            showDenyButton: true,
-            denyButtonText: 'Play Again',
-            timer: 10000,
-          }).then((result) => {
-            if (result.isDenied) resetGame();
-          });
-          // setTimeout(resetGame, 3000); //restart game
-        } else {
-          // update score
-          setGameScore(game.revealedCells);
-        }
-      }
-    }
-  }
-
-  function flagCell(x: number, y: number): void {
-    // check to make sure cell is no revealed already,
-    // because only hidden cells can be flagged
-    if (!cellState[x][y].isRevealed) {
-      //saving copy of flag state
-      const newCellState: Cells = JSON.parse(JSON.stringify(cellState));
-
-      //if cell is no flagged , flag it
-      // if cell is already flag, unflag it
-      if (!cellState[x][y].isFlagged) {
-        newCellState[x][y].isFlagged = true;
-        playSound('click');
-        game.flaggedMines++; //increment number of flaggedMines
-      } else {
-        newCellState[x][y].isFlagged = false;
-        game.flaggedMines--; //decrement number of flaggedMines
-      }
-      // update state
-      setCellState(newCellState);
-    }
-  }
 
   // reset the board with default or user provided
   // custom dimensions and difficulty
@@ -172,13 +67,14 @@ const App: React.FC = () => {
     level: string = game.difficulty
   ): void {
     //generate new game
-    game = new Board(xdim, ydim, level);
+    game = new SnakePit(xdim, ydim, level);
     setGameOver(false);
     // play start sound
     playSound('start');
 
     // reset game state with all cells hidden
-    setCellState(game.gameBoard);
+    setSnakePosition(game.snakeHead());
+    setFoodPosition(game.food);
   }
 
   // play sound at start of game
@@ -196,7 +92,7 @@ const App: React.FC = () => {
           <>
             <span style={{ paddingTop: 4 }}>SCORE: {gameScore}</span>
             <span style={{ paddingTop: 4 }}>
-              MINES: {game.totalMineCount() - game.flaggedMines}
+              SNAKE SIZE: {game.snake.length}
             </span>
           </>
         ) : (
@@ -214,24 +110,12 @@ const App: React.FC = () => {
         </button>
       </ScoreBoard>
       <GameGrid height={xHeight} width={yWidth} xdim={xDim} ydim={yDim}>
-        {cellState.map((rows, x) => {
-          return (
-            <>
-              {rows.map((cell, y) => {
-                return (
-                  <GameCell
-                    key={Math.random()}
-                    x={x}
-                    y={y}
-                    cellState={cell}
-                    revealCell={revealCell}
-                    flagCell={flagCell}
-                  />
-                );
-              })}
-            </>
-          );
-        })}
+        <>
+          {game.snake.map(({ x, y }, index) => {
+            return <GameCell x={x} y={y} cellType='snake' />;
+          })}
+          <GameCell x={game.food.x} y={game.food.y} cellType='food' />
+        </>
       </GameGrid>
       <GameInputForm width={yWidth} resetGame={resetGame} />
     </>

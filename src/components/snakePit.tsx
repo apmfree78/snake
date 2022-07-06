@@ -7,7 +7,7 @@ interface Cell {
 // Snake is just an array of cells
 type SnakeBody = Cell[];
 
-export default class Board {
+export default class SnakePit {
   // defining and initializing snake and food
   snake: SnakeBody = [{ x: 5, y: 5 }];
   food: Cell = { x: 8, y: 8 };
