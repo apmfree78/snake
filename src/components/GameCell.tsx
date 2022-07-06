@@ -16,8 +16,8 @@ const SnakeBody = styled.div<StyleProps>`
   grid-column-start: ${(p) => p.x};
   grid-row-start: ${(p) => p.y};
   background-color: blue;
-  border-radius: 2px;
-  border: 0.15vmin solid black;
+  border-radius: 1vmin;
+  border: 0.4vmin solid black;
   color: black;
   display: flex;
   justify-content: center;
@@ -30,7 +30,7 @@ const FoodBody = styled(SnakeBody)`
   grid-column-start: ${(p) => p.x};
   grid-row-start: ${(p) => p.y};
   background-color: yellow;
-  border-radius: 0px;
+  border-radius: 0.3vmin;
 `;
 
 //SnakeCell button - reusable component
