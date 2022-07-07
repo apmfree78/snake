@@ -1,4 +1,4 @@
-import styled, { StyledComponent } from 'styled-components';
+import styled from 'styled-components';
 
 // contains styled components for game
 
@@ -75,27 +75,4 @@ const GameForm = styled.form<GameFormProps>`
   }
 `;
 
-// css for game cell box (hidden)
-const CellBox: StyledComponent<'div', any, {}, never> = styled.div`
-  /*   height: 100px;
-    width: 100px; */
-  background-color: #ccc;
-  margin: 1px;
-  /* border-radius: 2px; */
-  /* border: 0.15vmin solid orange; */
-  color: black;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 2vmin;
-  font-weight: bolder;
-`;
-
-// revealed cell takes properties of standard CellBox with different
-// background color and border
-const RevealBox = styled(CellBox)`
-  background-color: #ccc;
-  border: 0.15vmin solid black;
-`;
-
-export { GameGrid, ScoreBoard, GameForm, CellBox, RevealBox };
+export { GameGrid, ScoreBoard, GameForm };
